@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<!-- This configuration file sets up log4j logging, designed for development environment. -->
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+  <!-- Uses contexts to enrich the log with sessionId and clientAddress
+       see #LogEnricherFilter and
+       http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html -->
+
+  <!-- logging to the console -->
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%p - %C{1}.%M(%L) | %m | session=[%X{sessionId}] | client=%X{clientAddr} | thread=[%t]%n" />
+		</layout>
+	</appender>
+
+  <!-- File-based logging.
+       The log directory is Tomcat-specific, but it can be improved by introducing a different
+       environment variable.
+       See: http://stackoverflow.com/questions/216781/log4j-configuring-a-web-com.epam.testwebapp-to-use-a-relative-path -->
+  <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${catalina.base}/logs/recipeapp.log" />
+		<param name="MaxFileSize" value="10MB" /><!-- valid suffixes are: KB, MB, GB-->
+		<param name="MaxBackupIndex" value="10" />
+		<param name="Append" value="true" />
+    <layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ISO8601} %-5p [%t] %c : %m | session=[%X{sessionId}] | client=%X{clientAddr} | thread=[%t]%n" />
+		</layout>
+	</appender>
+
+	<logger name="org.apache">
+		<level value="WARN" />
+	</logger>
+
+  <logger name="org.springframework">
+    <level value="INFO" />
+  </logger>
+
+  <logger name="com.epam">
+    <level value="DEBUG" />
+  </logger>
+
+	<logger name="org.hibernate.type">
+		<level value="trace" />
+	</logger >
+	<root>
+		<level value="INFO" />
+		<!--appender-ref ref="FILE" /-->
+		<appender-ref ref="CONSOLE" />
+	</root>
+
+</log4j:configuration>
